@@ -1,8 +1,13 @@
 package com.mrubel.tuntuninews;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,19 +21,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-
-    TextView show_data;
-    String t1 = "";
-    String n1 = "";
+    ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        show_data = (TextView) findViewById(R.id.showdata);
+        lv = (ListView) findViewById(R.id.mylist);
 
         fetchingData();
     }
@@ -44,16 +48,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
 
+            final String[] news_title = new String[response.length()];
+            final String[] news_detail = new String[response.length()];
+            final String[] news_time = new String[response.length()];
+
                 for (int i =0; i < response.length(); i++){
 
                     try {
 
                         JSONObject jsonObject = (JSONObject) response.get(i);
-
-                            t1 = t1 + jsonObject.getString("title")+"\n\n";
-                            n1 = n1+ jsonObject.getString("news")+"\n\n";
-
-
+                        news_title[i] = jsonObject.getString("title");
+                        news_detail[i] = jsonObject.getString("news");
+                        news_time[i] = jsonObject.getString("time");
 
 
                     } catch (JSONException e) {
@@ -63,7 +69,20 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                show_data.setText(t1+n1);
+                lv.setAdapter(new ArrayAdapter(getApplicationContext(), R.layout.mylistview, R.id.textviewforlist, news_title));
+
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(MainActivity.this, Details.class);
+                        intent.putExtra("MyTITLE", news_title[position]);
+                        intent.putExtra("MyNEWS", news_detail[position]);
+                        intent.putExtra("MyTime", news_time[position]);
+                        startActivity(intent);
+
+                    }
+                });
+
 
             }
         }, new Response.ErrorListener() {
@@ -75,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         com.mrubel.tuntuninews.AppController.getInstance().addToRequestQueue(jsonArrayRequest);
-        Toast.makeText(getApplicationContext(), "Data Loaded Successsfully!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Data Loaded Successfully!", Toast.LENGTH_SHORT).show();
 
     }
 
