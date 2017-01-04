@@ -36,6 +36,37 @@ public class AddingNews extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                String url = "http://mrubel.com/tuntuninews/api/newpostfromapp.php";
+
+
+                StringRequest sq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+                    protected Map<String, String > getParams(){
+                        Map<String, String> parr = new HashMap<String, String>();
+
+                        parr.put("mytitle", _title.getText().toString());
+                        parr.put("mydate", _date.getText().toString());
+                        parr.put("mynews", _news.getText().toString());
+
+                        return parr;
+
+                    }
+
+                };
+
+
+
+                AppController.getInstance().addToRequestQueue(sq);
+                Toast.makeText(getApplicationContext(), "Vua news published Successfully!", Toast.LENGTH_LONG).show();
 
             }
 
