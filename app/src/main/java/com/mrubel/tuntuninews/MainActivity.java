@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     ListView lv;
+    Button b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +35,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         lv = (ListView) findViewById(R.id.mylist);
+        b = (Button) findViewById(R.id.addingnewnews);
 
         fetchingData();
+
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), AddingNews.class));
+            }
+        });
+
     }
 
 
@@ -97,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Data Loaded Successfully!", Toast.LENGTH_SHORT).show();
 
     }
+
+
 
 
 }
